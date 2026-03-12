@@ -1223,10 +1223,27 @@
         }
 
         function runSimVie() {
-            const plus = parseFloat(document.getElementById('sim-vie-plus').value) || 0; const moins = parseFloat(document.getElementById('sim-vie-moins').value) || 0; const sym = getSymbol(); if (plus === 0 && moins === 0) return;
-            const baseDate = new Date(); for(let i=0; i<12; i++) { const d = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 15).toISOString().split('T')[0]; if(plus > 0) transactions.push({ id: 'sim_p_'+Date.now()+i, label: "[SIM] Nouvelles Charges", amount: plus, type: 'expense', category: 'Abonnements', date: d }); if(moins > 0) transactions.push({ id: 'sim_m_'+Date.now()+i, label: "[SIM] Économies Réalisées", amount: moins, type: 'income', category: 'Autres', date: d }); }
-            const netDiff = (moins - plus) * 12; const msgBox = document.getElementById('sim-vie-result'); if(msgBox) msgBox.classList.remove('hidden');
-            if (netDiff > 0) { if(msgBox) msgBox.innerHTML = `📈 Changement appliqué sur 1 an.<br><br><b>Bilan :</b> Génération de <b>+${netDiff.toFixed(0)} ${sym}</b> sur 12 mois.`; } else { if(msgBox) msgBox.innerHTML = `📉 Changement appliqué sur 1 an.<br><br><b>Bilan :</b> Richesse diminuée de <b>${Math.abs(netDiff).toFixed(0)} ${sym}</b>.`; }
+            const plus = parseFloat(document.getElementById('sim-vie-plus').value) || 0;
+            const moins = parseFloat(document.getElementById('sim-vie-moins').value) || 0;
+            const sym = getSymbol();
+            if (plus === 0 && moins === 0) return;
+
+            const baseDate = new Date();
+            for(let i=0; i<12; i++) {
+                const d = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 15).toISOString().split('T')[0];
+                if(plus > 0) transactions.push({ id: 'sim_p_'+Date.now()+i, label: "[SIM] Nouvelles Charges", amount: plus, type: 'expense', category: 'Abonnements', date: d });
+                if(moins > 0) transactions.push({ id: 'sim_m_'+Date.now()+i, label: "[SIM] Économies Réalisées", amount: moins, type: 'income', category: 'Autres', date: d });
+            }
+
+            const netDiff = (moins - plus) * 12;
+            const msgBox = document.getElementById('sim-vie-result');
+            if(msgBox) msgBox.classList.remove('hidden');
+
+            if (netDiff > 0) {
+                if(msgBox) msgBox.innerHTML = `📈 Changement appliqué sur 1 an.<br><br><b>Bilan :</b> Ces nouvelles habitudes généreront <b>+${netDiff.toFixed(0)} ${sym}</b> de patrimoine sur 12 mois. Consultez le graphique "Flux Mensuels" pour voir la projection !`;
+            } else {
+                if(msgBox) msgBox.innerHTML = `📉 Changement appliqué sur 1 an.<br><br><b>Bilan :</b> Votre richesse diminuera de <b>${Math.abs(netDiff).toFixed(0)} ${sym}</b> sur l'année. La ligne d'épargne va baisser sur les graphiques.`;
+            }
             updateUI();
         }
 
