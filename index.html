@@ -10,8 +10,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://unpkg.com">
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
@@ -37,6 +36,49 @@
             overflow-x: hidden;
             transition: background 0.5s ease;
         }
+
+        /* --- STYLES DU PRELOADER --- */
+        #quantum-preloader {
+            position: fixed;
+            inset: 0;
+            background: #020617;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+        }
+        .orbit-spinner {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(99, 102, 241, 0.1);
+            border-top: 3px solid #8b5cf6;
+            border-right: 3px solid #06b6d4;
+            animation: spin-quantum 1.2s linear infinite;
+        }
+        @keyframes spin-quantum {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .preloader-text {
+            margin-top: 2rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse-opacity 2s ease-in-out infinite;
+        }
+        @keyframes pulse-opacity {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        /* -------------------------- */
 
         .glass-panel {
             background: var(--card-bg);
@@ -128,6 +170,11 @@
     </style>
 </head>
 <body class="p-0 m-0 relative overflow-hidden h-screen">
+
+    <div id="quantum-preloader">
+        <div class="orbit-spinner"></div>
+        <div class="preloader-text">Initialisation Système</div>
+    </div>
 
     <div id="landing-page" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#020617]">
         <div class="absolute top-[-10%] left-[-10%] w-[30rem] h-[30rem] md:w-[50rem] md:h-[50rem] bg-indigo-600/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none animate-pulse"></div>
@@ -3033,7 +3080,16 @@
             updateUI();
         }
 
-        window.onload = init;
+        // L'astuce pro: on lance init() puis on détruit le preloader de manière fluide
+        window.onload = () => {
+            init();
+            const preloader = document.getElementById('quantum-preloader');
+            if (preloader) {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+                setTimeout(() => { preloader.remove(); }, 800);
+            }
+        };
     </script>
 </body>
 </html>
